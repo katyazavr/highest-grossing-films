@@ -16,5 +16,6 @@ Thumbs.db
 venv/
 env/
 
-# VS Code
-.vscode/
+# PyCharm / IntelliJ
+.idea/
+*.iml
