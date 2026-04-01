@@ -1,5 +1,5 @@
 // Path to JSON file
-const dataPath = '../parsing_data/films.json';
+const dataPath = 'parsing_data/films.json';
 
 let filmsData = [];
 
