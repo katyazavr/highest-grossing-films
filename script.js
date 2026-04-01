@@ -75,9 +75,14 @@ sortSelect.addEventListener('change', () => {
 // Create Country Chart
 function createCountryChart(films) {
     const countryCounts = {};
+
     films.forEach(film => {
         if (film.country) {
-            countryCounts[film.country] = (countryCounts[film.country] || 0) + 1;
+            // Если film.country — массив стран
+            const countries = Array.isArray(film.country) ? film.country : [film.country];
+            countries.forEach(c => {
+                countryCounts[c] = (countryCounts[c] || 0) + 1;
+            });
         }
     });
 
