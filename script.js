@@ -1,84 +1,54 @@
-// Path to JSON file
 const dataPath = 'parsing_data/films.json';
+const filmsContainer = document.getElementById('filmsContainer');
+const sortSelect = document.getElementById('sortSelect');
 
 let filmsData = [];
 
-// DOM Elements
-const filmsContainer = document.getElementById('filmsContainer');
-const filterInput = document.getElementById('filterDirector');
-const sortSelect = document.getElementById('sortSelect');
-
-// Load JSON data
 fetch(dataPath)
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
         filmsData = data;
         displayFilms(filmsData);
         createCountryChart(filmsData);
     })
-    .catch(error => console.error('Error loading JSON:', error));
+    .catch(err => console.error(err));
 
-// Display films in the container in vertical snake layout
+// Display films in horizontal slider with hover effect
 function displayFilms(films) {
     filmsContainer.innerHTML = '';
 
-    const leftColumn = [];
-    const rightColumn = [];
+    films.forEach(film => {
+        const card = document.createElement('div');
+        card.classList.add('film-card');
 
-    films.forEach((film, index) => {
-        const filmCard = document.createElement('div');
-        filmCard.classList.add('film-card');
-
-        filmCard.innerHTML = `
+        card.innerHTML = `
             <h3>${film.title}</h3>
-            <p><strong>Director:</strong> ${film.director}</p>
-            <p><strong>Year:</strong> ${film.year}</p>
-            <p><strong>Box Office:</strong> $${film.box_office.toLocaleString()}</p>
-            ${film.country ? `<p><strong>Country:</strong> ${film.country}</p>` : ''}
+            <div class="details">
+                <p><strong>Director:</strong> ${film.director}</p>
+                <p><strong>Year:</strong> ${film.year}</p>
+                <p><strong>Box Office:</strong> $${film.box_office.toLocaleString()}</p>
+                ${film.country ? `<p><strong>Country:</strong> ${Array.isArray(film.country) ? film.country.join(', ') : film.country}</p>` : ''}
+            </div>
         `;
 
-        if (index % 2 === 0) {
-            leftColumn.push(filmCard);
-        } else {
-            rightColumn.push(filmCard);
-        }
+        filmsContainer.appendChild(card);
     });
-
-    // Append in snake order: левая колонка сверху вниз, правая колонка сверху вниз
-    const maxLength = Math.max(leftColumn.length, rightColumn.length);
-    for (let i = 0; i < maxLength; i++) {
-        if (leftColumn[i]) filmsContainer.appendChild(leftColumn[i]);
-        if (rightColumn[i]) filmsContainer.appendChild(rightColumn[i]);
-    }
 }
 
-// Filter by director
-filterInput.addEventListener('input', () => {
-    const query = filterInput.value.toLowerCase();
-    const filtered = filmsData.filter(film => film.director.toLowerCase().includes(query));
-    displayFilms(filtered);
-    createCountryChart(filtered);
-});
-
-// Sort films
+// Sort by year
 sortSelect.addEventListener('change', () => {
-    const sortBy = sortSelect.value;
     const sorted = [...filmsData].sort((a, b) => {
-        if(sortBy === 'box_office' || sortBy === 'year') {
-            return b[sortBy] - a[sortBy];
-        }
-        return a[sortBy].localeCompare(b[sortBy]);
+        return sortSelect.value === 'asc' ? a.year - b.year : b.year - a.year;
     });
     displayFilms(sorted);
 });
 
-// Create Country Chart
+// Create country chart
 function createCountryChart(films) {
     const countryCounts = {};
 
     films.forEach(film => {
         if (film.country) {
-            // Если film.country — массив стран
             const countries = Array.isArray(film.country) ? film.country : [film.country];
             countries.forEach(c => {
                 countryCounts[c] = (countryCounts[c] || 0) + 1;
