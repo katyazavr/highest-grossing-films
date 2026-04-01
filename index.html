@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Highest Grossing Films</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
@@ -21,6 +22,11 @@
             <option value="year">Release Year</option>
             <option value="box_office">Box Office</option>
         </select>
+    </section>
+
+    <section class="chart-section">
+        <h2>Distribution of Films by Country</h2>
+        <canvas id="countryChart" width="400" height="200"></canvas>
     </section>
 
     <section id="filmsContainer" class="films-container">
